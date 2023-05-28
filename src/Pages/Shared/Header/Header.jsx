@@ -36,7 +36,7 @@ const Header = () => {
             <Link to="/orders">Orders</Link>
           </li>
           <li>
-            <button onClick={handleLogout}>Logout</button>
+            <button onClick={handleLogout}><Link to="/">Logout</Link></button>
           </li>
         </>
       ) : (

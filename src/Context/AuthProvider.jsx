@@ -16,21 +16,24 @@ const AuthProvider = ({ children }) => {
   const [loader, setLoader] = useState(true);
 
   const createUser = (email, password) => {
+    setLoader(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
   const loginUser = (email, password) => {
+    setLoader(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
   const logoutUser = () => {
+    setLoader(true);
+    localStorage.removeItem("genius-token");
     return signOut(auth);
   };
 
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      console.log(currentUser);
       setLoader(false);
     });
     return () => {

@@ -3,20 +3,34 @@ import { AuthContext } from "../../Context/AuthProvider";
 import OrderRow from "./OrderRow";
 
 const Orders = () => {
-  const { user } = useContext(AuthContext);
+  const { user, logoutUser } = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/orders?email=${user?.email}`)
-      .then((res) => res.json())
-      .then((result) => setOrders(result));
-  }, [user?.email]);
+    fetch(`http://localhost:5000/orders?email=${user?.email}`, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem("genius-token")}`,
+      },
+    })
+      .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          return logoutUser();
+        }
+        return res.json();
+      })
+      .then((result) => {
+        setOrders(result);
+      });
+  }, [user?.email, logoutUser]);
 
   const handleRemoveOrder = (id) => {
     const proceed = window.confirm("Are you want to delete this order?");
     if (proceed) {
       fetch(`http://localhost:5000/order/${id}`, {
         method: "DELETE",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("genius-token")}`,
+        },
       })
         .then((res) => res.json())
         .then((result) => {
@@ -33,6 +47,7 @@ const Orders = () => {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("genius-token")}`,
       },
       body: JSON.stringify({ status: "Approved" }),
     })

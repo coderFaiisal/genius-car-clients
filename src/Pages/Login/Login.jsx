@@ -17,10 +17,25 @@ const Login = () => {
     loginUser(email, password)
       .then((result) => {
         const user = result.user;
+        const currentUser = {
+          email: user.email,
+        };
+        fetch("http://localhost:5000/jwt", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(currentUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            localStorage.setItem("genius-token", data.token);
+          });
+
         form.reset();
         navigate(from, { replace: true });
       })
-      .then((error) => {
+      .catch((error) => {
         console.log(error);
       });
   };
